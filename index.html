@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Dados - n8n</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select, input, button { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #ff6d5a; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background-color: #e65b4a; }
+        #status { margin-top: 15px; text-align: center; font-size: 14px; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Registro de Casa</h2>
+    
+    <div class="group">
+        <label for="casa">Selecione a Casa:</label>
+        <select id="casa">
+            </select>
+    </div>
+
+    <div class="group">
+        <label for="foto">Tirar Foto:</label>
+        <input type="file" id="foto" accept="image/*" capture="camera">
+    </div>
+
+    <button onclick="enviarDados()">Enviar para Processamento</button>
+    
+    <div id="status"></div>
+</div>
+
+<script>
+    // Preencher o dropdown de 01 a 61
+    const selectCasa = document.getElementById('casa');
+    for (let i = 1; i <= 61; i++) {
+        let valor = i < 10 ? '0' + i : i;
+        let option = new Option(valor, valor);
+        selectCasa.add(option);
+    }
+
+    async function enviarDados() {
+        const casa = document.getElementById('casa').value;
+        const fotoFile = document.getElementById('foto').files[0];
+        const status = document.getElementById('status');
+
+        if (!fotoFile) {
+            alert("Por favor, tire uma foto antes de enviar.");
+            return;
+        }
+
+        status.innerText = "Enviando... aguarde.";
+        
+        // Preparar os dados para o Webhook (Multipart Form Data)
+        const formData = new FormData();
+        formData.append('casa', casa);
+        formData.append('file', fotoFile);
+
+        // substitua pela URL do seu Webhook do n8n
+        const WEBHOOK_URL = 'SUA_URL_DO_WEBHOOK_AQUI';
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                status.innerText = "✅ Enviado com sucesso!";
+                status.style.color = "green";
+            } else {
+                status.innerText = "❌ Erro ao enviar.";
+                status.style.color = "red";
+            }
+        } catch (error) {
+            console.error(error);
+            status.innerText = "❌ Erro de conexão.";
+            status.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
