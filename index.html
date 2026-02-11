@@ -67,7 +67,7 @@
         formData.append('casa', casa);
         formData.append('file', fotoFile);
 
-        const WEBHOOK_URL = 'https://n8n.srv1099277.hstgr.cloud/webhook-test/leitura-casas';
+        const WEBHOOK_URL = 'https://n8n.srv1099277.hstgr.cloud/webhook/leitura-casas';
 
         try {
             const response = await fetch(WEBHOOK_URL, {
@@ -94,3 +94,4 @@
 
 </body>
 </html>
+
